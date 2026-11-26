@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="gu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Bhoogwani · ભૂગવાણી — Doctor-guided Ayurvedic Supportive Care">
+<meta name="theme-color" content="#4a2f1b">
+<title>Bhoogwani · ભૂગવાણી</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Noto+Sans+Gujarati:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f0e1;--card:#fffdf8;--brown:#4a2f1b;--onbrown:#fbf4e6;--green:#3f7a3a;--greenbg:#e3eed6;--ink:#3a2616;--mute:#7b6a57;--line:#e6dbc3;--star:#c9bba0;--warn:#fff2cc;--warnink:#6b4e00;--red:#b3392b;--shadow:0 6px 22px rgba(74,47,27,.10)}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1711;--card:#2a2319;--brown:#3b2616;--green:#8fc26d;--greenbg:#2b3a22;--ink:#f1e8d6;--mute:#b3a48c;--line:#3e3425;--star:#6b5a43;--warn:#3d3210;--warnink:#f0d98a;--red:#ef8a7c;--shadow:0 6px 22px rgba(0,0,0,.35)}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.75 'Noto Sans Gujarati',system-ui,sans-serif;padding-bottom:env(safe-area-inset-bottom,0px)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--brown);z-index:40}
+h1,h2,h3{font-family:'Fraunces','Noto Sans Gujarati',serif;margin:0;line-height:1.3;color:var(--brown)}
+@media (prefers-color-scheme:dark){h1,h2,h3{color:var(--ink)}}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+.page{padding:44px 0 24px;min-height:60vh}
+.page>.wrap>h2{font-size:32px;margin-bottom:8px}
+.lead{color:var(--mute);margin:0 0 28px;max-width:62ch}
+header{background:var(--brown);color:var(--onbrown);padding:12px 0 6px}
+.hrow{display:flex;flex-direction:column-reverse;gap:6px}
+.hrow .lang{align-self:flex-end}
+.brand{display:flex;align-items:center;justify-content:center;gap:16px;padding:6px 0 10px;color:var(--onbrown);text-decoration:none;align-self:center}
+.brand h1{font-size:clamp(28px,8vw,48px);color:var(--onbrown);letter-spacing:.5px}
+.sub{font-size:14px;opacity:.85}
+.logo-box{width:72px;height:72px;flex:0 0 auto;border-radius:16px;background:var(--onbrown);display:grid;place-items:center;overflow:hidden;font-size:38px}
+.logo-box img{width:100%;height:100%;object-fit:cover}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--brown);display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:0 12px;box-shadow:var(--shadow)}
+@media(min-width:760px){nav{justify-content:center}}
+nav a{color:var(--onbrown);text-decoration:none;padding:12px 16px;white-space:nowrap;font-weight:600;font-size:15px;border-bottom:3px solid transparent;opacity:.85}
+nav a.on{border-color:#a9d58a;opacity:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:12px 22px;border:0;border-radius:12px;font:inherit;font-weight:700;cursor:pointer;background:var(--green);color:#fff;text-decoration:none;text-align:center}
+@media (prefers-color-scheme:dark){.btn:not(.alt):not(.red):not(.lang){color:#14210e}}
+.btn.alt{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn.red{background:var(--red);color:#fff}
+.btn.sm{min-height:44px;padding:8px 14px;font-size:15px}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.lang{background:var(--onbrown);color:var(--brown);min-height:42px;padding:6px 14px;font-size:14px;white-space:nowrap}
+:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.hero{margin-top:8px}
+.hero h1{font-size:clamp(28px,5vw,44px);max-width:18ch}
+.hero p{max-width:58ch;color:var(--mute);font-size:18px;margin:18px 0 28px}
+.disc{background:var(--warn);color:var(--warnink);border-left:6px solid var(--green);padding:14px 18px;margin:0 0 28px;border-radius:10px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:32px;margin:20px 0 44px}
+.card,.panel,.pill{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.card{overflow:hidden;display:flex;flex-direction:column}
+.card img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--greenbg)}
+.pad{padding:24px;display:flex;flex-direction:column;gap:14px;flex:1}
+.price{font-size:24px;font-weight:700;color:var(--green)}
+.badge{display:inline-block;padding:2px 12px;border-radius:99px;font-size:14px;font-weight:700;background:var(--greenbg);color:var(--green);margin-left:6px}
+.badge.out{background:#f6d9d4;color:#8a2a1e}
+.ing{font-size:15px;color:var(--mute)}
+.avail{font-size:16px}
+.avail b{color:var(--green)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>*{flex:1}
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;margin:32px 0}
+.pill{padding:24px}.pill .ic{font-size:34px}
+.story p{max-width:68ch;margin:0 0 16px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:28px;align-items:start}
+.panel{padding:26px;display:flex;flex-direction:column;gap:12px}
+.stars{display:flex;gap:6px}
+.stars button{background:none;border:0;font-size:36px;cursor:pointer;color:var(--star);padding:0 2px;min-width:44px;min-height:44px}
+.stars button.on{color:#e0a416}
+.item{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--line)}
+.item .nm{flex:1 1 200px;font-weight:700}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-size:22px;font-weight:700;cursor:pointer}
+.qty b{min-width:28px;text-align:center}
+.tot{font-size:24px;font-weight:700;display:flex;justify-content:space-between;padding-top:14px}
+footer{background:var(--brown);color:var(--onbrown);margin-top:48px;padding:28px 0;text-align:center;font-size:15px}
+footer button{background:none;border:0;color:inherit;font:inherit;cursor:pointer;opacity:.6;padding:8px 12px;font-size:12px;text-decoration:underline}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:50}
+#modal.on{display:flex}
+.sheet{background:var(--bg);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:26px 22px calc(28px + env(safe-area-inset-bottom,0px))}
+@media(min-width:600px){#modal{align-items:center}.sheet{border-radius:22px}}
+label{display:block;font-weight:700;margin:14px 0 4px;font-size:15px}
+input,select,textarea{width:100%;min-height:50px;padding:10px 12px;font:inherit;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+textarea{min-height:92px}
+.hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0}
+.tabs{display:flex;gap:10px;margin:8px 0 16px}
+.tabs .btn{flex:1;flex-direction:column;min-height:64px;gap:0;font-size:14px;padding:8px}
+.tabs .btn:not(.on){background:var(--card);color:var(--ink);border:2px solid var(--line)}
+.sum{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.sum div{border-radius:14px;padding:14px 8px;text-align:center;font-weight:700;font-size:14px;background:var(--warn);color:var(--warnink)}
+.sum div.d{background:var(--greenbg);color:var(--green)}
+.sum div.f{background:#f6d9d4;color:#8a2a1e}
+.sum b{display:block;font-size:34px;line-height:1.1}
+.order{background:var(--card);border:1px solid var(--line);border-left:8px solid #d8a021;border-radius:12px;padding:16px;margin-bottom:14px;display:flex;flex-direction:column;gap:6px;word-break:break-word}
+.order.done{border-left-color:var(--green);opacity:.85}
+.order.fail{border-left-color:var(--red);opacity:.85}
+.order .nm{font-size:20px;font-weight:700}
+.order a.tel{font-size:20px;font-weight:700;color:var(--green)}
+.big{font-size:56px;text-align:center}
+.pin{text-align:center;font-size:28px;letter-spacing:10px}
+.empty{padding:30px;text-align:center;color:var(--mute)}
+.spin{width:34px;height:34px;border:4px solid var(--line);border-top-color:var(--green);border-radius:50%;margin:0 auto 12px;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:99px;z-index:60;font-weight:700;max-width:90vw;text-align:center}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="hrow">
+    <a class="brand" href="#home">
+      <div class="logo-box" id="logoBox">🌿</div>
+      <div><h1>Bhoogwani · ભૂગવાણી</h1><div class="sub" id="hsub"></div></div>
+    </a>
+    <button class="btn lang" onclick="toggleLang()">ગુજરાતી / English</button>
+  </div>
+</div></header>
+<nav id="nav"></nav>
+<main id="app"></main>
+<footer><div class="wrap">© Bhoogwani · ભૂગવાણી<br><button id="adminLink" onclick="askPin()"></button><br><span style="opacity:.85">bhoogwani.pvt.ltd</span></div></footer>
+<div id="modal" onclick="if(event.target===this)closeModal()"><div class="sheet" id="sheet"></div></div>
+
+<script>
+"use strict";
+/* ================= CONFIGURATION ================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbwyzcO8vhpuG1os0DbOV1ukFT0Esq1jgVxt-LhHRXAvpbcJ31FBxMj2n6RfcdEtUjxJ/exec"; // Apps Script Web App URL
+const WHATSAPP_NUMBER = "918238158243";   // WhatsApp (orders)
+const CALLING_NUMBER  = "9624926441";     // phone call
+const EMAIL = "bhoogwanipvt@gmail.com";
+const YOUTUBE_CHANNEL = "https://www.youtube.com/channel/UC3-M_2h90w5X0n7cxdsekOg";
+
+/* ================= HELPERS ================= */
+const $ = id => document.getElementById(id);
+let lang = "gu";
+const x = (e, g) => lang === "gu" ? g : e;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = u => /^https?:\/\//i.test(String(u || "").trim()) ? String(u).trim() : "";
+const ph = (e, c) => "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'><rect width='400' height='300' fill='${c}'/><text x='200' y='185' font-size='110' text-anchor='middle'>${e}</text></svg>`);
+const PH = ph("🌿", "#dfe9cf");
+function toast(m){const d=document.createElement("div");d.className="toast";d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}
+function normPhone(s){
+  let d=String(s||"").replace(/[૦-૯]/g,c=>String(c.charCodeAt(0)-0x0AE6)).replace(/\D/g,"");
+  if(d.length===12&&d.startsWith("91"))d=d.slice(2);else if(d.length===11&&d.startsWith("0"))d=d.slice(1);
+  return d;
+}
+const validPhone = p => /^[6-9]\d{9}$/.test(p);
+
+/* ================= API (Google Apps Script) ================= */
+async function api(body){
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);
+  try{
+    const r = await fetch(API_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(body), signal:ctl.signal});
+    const j = await r.json();
+    return j && typeof j === "object" ? j : {ok:false, error:"server"};
+  }catch(e){ return {ok:false, error:"network"}; }
+  finally{ clearTimeout(t); }
+}
+function errMsg(r){
+  switch(r && r.error){
+    case "network": return x("No internet or server not reachable. Please try again.","ઇન્ટરનેટ કે સર્વર મળતું નથી. ફરી પ્રયત્ન કરો.");
+    case "bad_input": return x("Please check the details and try again.","કૃપા કરી વિગતો તપાસી ફરી પ્રયત્ન કરો.");
+    case "bad_url": return x("Link must start with https://","લિંક https:// થી શરૂ થવી જોઈએ.");
+    case "stock": return x(`Only ${r.left} left in stock for “${r.name}”.`,`“${r.name}” નો ફક્ત ${r.left} સ્ટોક બાકી છે.`);
+    case "gone": return x("A product in your cart is no longer available.","કાર્ટની એક પ્રોડક્ટ હવે ઉપલબ્ધ નથી.");
+    case "rate": return x("Too many requests. Please try again later or call us.","ઘણા પ્રયત્નો થયા છે. થોડી વાર પછી પ્રયત્ન કરો અથવા ફોન કરો.");
+    case "busy": return x("Server is busy. Please try again.","સર્વર વ્યસ્ત છે. ફરી પ્રયત્ન કરો.");
+    case "bad_pin": return x("Wrong PIN","પિન ખોટો છે");
+    case "locked": return x("Too many wrong PINs. Try again after 15 minutes.","ઘણા ખોટા પિન. ૧૫ મિનિટ પછી પ્રયત્ન કરો.");
+    case "notfound": return x("Item not found. Refresh and try again.","મળ્યું નહીં. રિફ્રેશ કરીને ફરી પ્રયત્ન કરો.");
+    default: return x("Something went wrong. Please try again.","કંઈક ખોટું થયું. ફરી પ્રયત્ન કરો.");
+  }
+}
+
+/* ================= STATE (memory only — koi storage nathi) ================= */
+let page="home", loadState="loading", products=[], about={en:"",gu:""}, logo="", lastLoad=0;
+let cart={}, co={pay:"cod"}, fb={}, rating=0, reqId=null;
+let token=null, adminTab="orders", adminOrders=[], adminProducts=[];
+let busy=false, reopen=()=>{};
+const pname=p=>lang==="gu"?(p.gu||p.en):(p.en||p.gu), pdesc=p=>lang==="gu"?(p.descGu||p.descEn):(p.descEn||p.descGu);
+
+async function loadPublic(silent){
+  try{
+    const r = await fetch(API_URL + "?action=public&_=" + Date.now());
+    const j = await r.json();
+    if(!j || !j.ok || !Array.isArray(j.products)) throw new Error("bad");
+    const changed = JSON.stringify([j.products,j.about,j.logo]) !== JSON.stringify([products,about,logo]);
+    const wasLoaded = loadState === "ok";
+    products = j.products; about = j.about || about; logo = j.logo || ""; loadState = "ok"; lastLoad = Date.now();
+    const dropped = reconcileCart();
+    if(changed || !wasLoaded || dropped){ keepForms(); render(); }
+    if(dropped) toast(x("Cart updated as stock changed.","સ્ટોક બદલાવાથી કાર્ટ અપડેટ થયું."));
+  }catch(e){
+    if(loadState !== "ok"){ loadState = "error"; keepForms(); render(); }
+    else if(!silent) toast(errMsg({error:"network"}));
+  }
+}
+function reconcileCart(){
+  let changed = false;
+  Object.keys(cart).forEach(id => {
+    const p = products.find(v => v.id === id);
+    if(!p || p.stock < 1){ delete cart[id]; changed = true; }
+    else if(cart[id] > p.stock){ cart[id] = p.stock; changed = true; }
+  });
+  if(changed) reqId = null;
+  return changed;
+}
+const cartLines = () => Object.keys(cart).map(id => { const p = products.find(v => v.id === id); return p ? {p, qty:cart[id]} : null; }).filter(Boolean);
+const cartCount = () => cartLines().reduce((a, l) => a + l.qty, 0);
+
+/* ================= ROUTER ================= */
+const ROUTES = ["home","products","cart","about","contact","admin"];
+function route(){
+  let r = location.hash.slice(1); if(!ROUTES.includes(r)) r = "home";
+  page = r; keepForms(); render(); window.scrollTo(0,0);
+  if((r==="products"||r==="cart"||r==="about") && Date.now()-lastLoad>8000) loadPublic(true);
+  if(r==="admin" && !token) askPin();
+}
+window.addEventListener("hashchange", route);
+function toggleLang(){ keepForms(); lang = lang==="gu"?"en":"gu"; render(); if($("modal").classList.contains("on")) reopen(); }
+function render(){
+  document.documentElement.lang = lang;
+  $("hsub").textContent = x("Doctor-guided Ayurvedic Supportive Care","ડૉક્ટર-માર્ગદર્શિત આયુર્વેદિક સહાયક સંભાળ");
+  const lg = safeUrl(logo);
+  $("logoBox").innerHTML = lg ? `<img src="${esc(lg)}" alt="Bhoogwani" onerror="this.onerror=null;if(this.parentNode)this.parentNode.textContent='🌿'">` : "🌿";
+  $("adminLink").textContent = x("Admin login","માલિક લોગિન");
+  const nv=[["home","Home","હોમ"],["products","Products","પ્રોડક્ટ્સ"],["cart","Cart & Order","કાર્ટ અને ઓર્ડર"],["about","About Us","અમારા વિશે"],["contact","Contact & Feedback","સંપર્ક અને પ્રતિસાદ"]];
+  const cc = cartCount();
+  $("nav").innerHTML = nv.map(n=>`<a href="#${n[0]}" class="${page===n[0]?"on":""}">${x(n[1],n[2])}${n[0]==="cart"&&cc?` (${cc})`:""}</a>`).join("");
+  const v = {home:homeHTML, products:()=>needData(productsHTML), cart:()=>needData(cartHTML), about:()=>needData(aboutHTML), contact:contactHTML, admin:()=>token?adminHTML():`<div class="page"></div>`}[page];
+  $("app").innerHTML = v();
+  if(page==="contact") paintStars();
+}
+function needData(fn){
+  if(loadState==="loading") return `<div class="page"><div class="wrap"><div class="empty"><div class="spin"></div>${x("Loading…","લોડ થઈ રહ્યું છે…")}</div></div></div>`;
+  if(loadState==="error") return `<div class="page"><div class="wrap"><div class="empty">⚠️<br>${x("Could not load. Please check internet.","લોડ થયું નથી. ઇન્ટરનેટ તપાસો.")}<br><br><button class="btn" onclick="retryLoad()">🔄 ${x("Try again","ફરી પ્રયત્ન કરો")}</button></div></div></div>`;
+  return fn();
+}
+function retryLoad(){ loadState="loading"; render(); loadPublic(false); }
+const DISC = `<div class="disc">⚠️ દરેક ઔષધિ જુદી જુદી લાક્ષણિકતા ધરાવતી હોય, ડૉક્ટરની સલાહ પ્રમાણે ઉપયોગ કરવો.<br>Every herb has unique properties; please use as per Doctor’s advice.</div>`;
+
+/* ================= PAGES ================= */
+function homeHTML(){return `<div class="page"><div class="wrap"><div class="hero">
+ <h1>${x("Healing with Nature, Guided by Doctors","પ્રકૃતિ સાથે સ્વસ્થતા, ડૉક્ટરના માર્ગદર્શન સાથે")}</h1>
+ <p><b>Friend • Philosopher • Guide</b><br>${x("Doctor-guided Ayurvedic Supportive Care. Every formula begins with a doctor’s understanding of the person, not just the symptom, and uses time-tested herbs in their natural form.","ડૉક્ટર-માર્ગદર્શિત આયુર્વેદિક સહાયક સંભાળ. દરેક ઔષધિ વ્યક્તિને સમજીને બને છે, માત્ર લક્ષણને નહીં, અને સદીઓ જૂની જડીબુટ્ટીઓ તેના કુદરતી સ્વરૂપમાં વપરાય છે.")}</p>
+ <a class="btn" href="#products">🌿 ${x("Browse products","પ્રોડક્ટ્સ જુઓ")}</a><div class="pillars">
+  <div class="pill"><div class="ic">🌱</div><h3>${x("100% Herbal","૧૦૦% હર્બલ")}</h3><p>${x("Pure herbs, no harsh chemicals.","શુદ્ધ જડીબુટ્ટીઓ, કઠોર રસાયણો નહીં.")}</p></div>
+  <div class="pill"><div class="ic">🩺</div><h3>${x("Doctor Formulated","ડૉક્ટર દ્વારા બનાવેલ")}</h3><p>${x("Every blend is guided by an Ayurvedic doctor.","દરેક મિશ્રણ આયુર્વેદિક ડૉક્ટરના માર્ગદર્શનથી બને છે.")}</p></div>
+  <div class="pill"><div class="ic">🔍</div><h3>${x("Transparent Sourcing","પારદર્શક સ્ત્રોત")}</h3><p>${x("Every herb is listed openly on the pack.","દરેક જડીબુટ્ટી પેક પર સ્પષ્ટ લખેલી હોય છે.")}</p></div></div>
+ ${DISC}</div></div></div>`;}
+
+function productsHTML(){return `<div class="page"><div class="wrap"><h2>${x("Our Products","અમારી પ્રોડક્ટ્સ")}</h2>
+ <p class="lead">${x("Doctor-guided Ayurvedic supportive care, made from pure herbs.","શુદ્ધ જડીબુટ્ટીઓમાંથી બનેલી ડૉક્ટર-માર્ગદર્શિત આયુર્વેદિક સહાયક ઔષધિઓ.")}</p>
+ ${products.length?`<div class="grid">${products.map(cardHTML).join("")}</div>`:`<div class="empty">${x("Products coming soon.","પ્રોડક્ટ્સ ટૂંક સમયમાં આવશે.")}</div>`}${DISC}</div></div>`;}
+function cardHTML(p){const s=p.stock>0, v=safeUrl(p.video);return `<article class="card"><img src="${esc(p.img||PH)}" alt="${esc(pname(p))}" loading="lazy" onerror="this.onerror=null;this.src=PH"><div class="pad">
+  <h3>${esc(pname(p))}</h3><div><span class="price">₹${p.price}</span><span class="badge ${s?"":"out"}">${s?x("In Stock","સ્ટોકમાં છે"):x("Out of Stock","સ્ટોક ખાલી")}</span></div><div class="avail">📦 ${x("Available","ઉપલબ્ધ")}: <b>${p.stock}</b></div>
+  <div class="ing"><b>${x("Ingredients","સામગ્રી")}:</b> ${esc(pdesc(p))}</div>
+  <div class="row" style="margin-top:auto">${v?`<a class="btn alt" href="${esc(v)}" target="_blank" rel="noopener">▶ ${x("Watch Video","વિડિઓ જુઓ")}</a>`:""}
+  <button class="btn" ${s?"":"disabled"} data-id="${esc(p.id)}" onclick="addCart(this.dataset.id)">🛒 ${x("Add to Cart","કાર્ટમાં ઉમેરો")}</button></div></div></article>`;}
+
+function aboutHTML(){const t=lang==="gu"?about.gu:about.en;return `<div class="page"><div class="wrap story"><h2>${x("About Us","અમારા વિશે")}</h2><p class="lead">Bhoogwani · ભૂગવાણી</p>${String(t||"").split("\n").filter(s=>s.trim()).map(p=>`<p>${esc(p)}</p>`).join("")}<div class="panel" style="margin-top:28px"><h3>▶ YouTube</h3><p>${x("Watch our videos on our YouTube channel “gujarat bandhu ffg”.","અમારી YouTube ચેનલ “gujarat bandhu ffg” પર અમારા વિડિઓ જુઓ.")}</p><a class="btn" href="${YOUTUBE_CHANNEL}" target="_blank" rel="noopener">▶ gujarat bandhu ffg</a></div></div></div>`;}
+
+function contactHTML(){return `<div class="page"><div class="wrap"><h2>${x("Contact & Feedback","સંપર્ક અને પ્રતિસાદ")}</h2><p class="lead">${x("Questions about a product? We are happy to help.","પ્રોડક્ટ વિશે પ્રશ્ન છે? અમે મદદ કરવા તૈયાર છીએ.")}</p>
+ <div class="two"><div class="panel"><h3>${x("Get in touch","અમારો સંપર્ક કરો")}</h3>
+  <a class="btn" href="tel:+91${CALLING_NUMBER}">📞 ${x("Call us (not WhatsApp)","ફોન કરો (વોટ્સએપ નથી)")} +91 ${CALLING_NUMBER}</a>
+  <a class="btn" href="https://wa.me/${WHATSAPP_NUMBER}" target="_blank" rel="noopener">💬 ${x("WhatsApp orders","વોટ્સએપ (ઓર્ડર)")} +91 ${WHATSAPP_NUMBER.slice(2)}</a>
+  <a class="btn alt" href="mailto:${EMAIL}">✉️ ${EMAIL}</a>
+  <a class="btn alt" href="${YOUTUBE_CHANNEL}" target="_blank" rel="noopener">▶ YouTube · gujarat bandhu ffg</a></div>
+ <div class="panel" id="feedback"><h3>${x("Share your feedback","તમારો પ્રતિસાદ આપો")}</h3>
+  <input class="hp" id="fb_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+  <label>${x("Your name","તમારું નામ")}</label><input id="fb_name" maxlength="80" value="${esc(fb.name||"")}" autocomplete="name">
+  <label>${x("Phone / Email","ફોન / ઈમેઈલ")}</label><input id="fb_contact" maxlength="100" value="${esc(fb.contact||"")}">
+  <label>${x("Rating","રેટિંગ")}</label><div class="stars" id="stars"></div>
+  <label>${x("Feedback / Query","પ્રતિસાદ / પ્રશ્ન")}</label><textarea id="fb_msg" maxlength="1000">${esc(fb.msg||"")}</textarea>
+  <button class="btn block" id="fbBtn" onclick="submitFb()">${x("Submit Feedback","પ્રતિસાદ મોકલો")}</button></div></div></div></div>`;}
+function paintStars(){const s=$("stars");if(s)s.innerHTML=[1,2,3,4,5].map(i=>`<button type="button" class="${i<=rating?"on":""}" aria-label="${i}" onclick="setRating(${i})">★</button>`).join("");}
+function setRating(i){keepForms();rating=i;paintStars();}
+function keepForms(){
+  if($("fb_name"))fb={name:$("fb_name").value,contact:$("fb_contact").value,msg:$("fb_msg").value};
+  if($("c_name"))co={name:$("c_name").value,phone:$("c_phone").value,addr:$("c_addr").value,pay:$("c_pay").value};
+}
+async function submitFb(){
+  if(busy)return; keepForms();
+  if(!fb.name.trim()||fb.contact.trim().length<5||!rating||fb.msg.trim().length<3){toast(x("Please fill name, phone/email, rating and message.","કૃપા કરી નામ, ફોન/ઈમેઈલ, રેટિંગ અને સંદેશ ભરો."));return;}
+  busy=true;$("fbBtn").disabled=true;
+  const r=await api({action:"feedback",name:fb.name.trim(),contact:fb.contact.trim(),rating,message:fb.msg.trim(),hp:$("fb_hp")?$("fb_hp").value:""});
+  busy=false;
+  if(r.ok){fb={};rating=0;render();toast(x("🙏 Thank you! Your feedback has reached us.","🙏 આભાર! તમારો પ્રતિસાદ અમને મળી ગયો છે."));}
+  else{ if($("fbBtn"))$("fbBtn").disabled=false; toast(errMsg(r)); }
+}
+
+/* ================= CART & ORDER ================= */
+function addCart(id){
+  const p=products.find(v=>v.id===id); if(!p||p.stock<1)return;
+  if((cart[id]||0)>=p.stock){toast(x("Maximum stock reached","વધુ સ્ટોક ઉપલબ્ધ નથી"));return;}
+  cart[id]=(cart[id]||0)+1; reqId=null; render(); toast("🛒 "+x("Added to cart","કાર્ટમાં ઉમેર્યું")+" ("+cartCount()+")");
+}
+function chgQty(id,d){
+  keepForms(); const p=products.find(v=>v.id===id); if(!p)return;
+  const q=(cart[id]||0)+d;
+  if(q<=0)delete cart[id]; else if(q<=p.stock)cart[id]=q; else toast(x("Maximum stock reached","વધુ સ્ટોક ઉપલબ્ધ નથી"));
+  reqId=null; render();
+}
+function cartHTML(){
+  const L=cartLines(),total=L.reduce((a,l)=>a+l.p.price*l.qty,0);
+  if(!L.length)return `<div class="page"><div class="wrap"><h2>${x("Cart & Order","કાર્ટ અને ઓર્ડર")}</h2><div class="empty">🛒<br>${x("Your cart is empty.","તમારું કાર્ટ ખાલી છે.")}</div><a class="btn" href="#products">${x("Browse products","પ્રોડક્ટ્સ જુઓ")}</a></div></div>`;
+  return `<div class="page"><div class="wrap"><h2>${x("Cart & Order","કાર્ટ અને ઓર્ડર")}</h2><div class="two" style="margin-top:20px">
+  <div class="panel">${L.map(l=>`<div class="item"><div class="nm">${esc(pname(l.p))}<br><span class="ing">₹${l.p.price}</span></div>
+   <div class="qty"><button data-id="${esc(l.p.id)}" onclick="chgQty(this.dataset.id,-1)" aria-label="-">−</button><b>${l.qty}</b><button data-id="${esc(l.p.id)}" onclick="chgQty(this.dataset.id,1)" aria-label="+">+</button></div>
+   <b>₹${l.p.price*l.qty}</b></div>`).join("")}<div class="tot"><span>${x("Total","કુલ રકમ")}</span><span>₹${total}</span></div></div>
+  <div class="panel"><h3>${x("Delivery details","ડિલિવરી વિગતો")}</h3>
+   <input class="hp" id="c_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+   <label>${x("Your name","તમારું નામ")}</label><input id="c_name" maxlength="80" value="${esc(co.name||"")}" autocomplete="name">
+   <label>${x("Mobile number (10 digits)","મોબાઈલ નંબર (૧૦ અંક)")}</label><input id="c_phone" type="tel" inputmode="numeric" maxlength="18" value="${esc(co.phone||"")}" autocomplete="tel">
+   <label>${x("Full delivery address (with area / landmark)","ઘરનું પૂરું સરનામું (વિસ્તાર / નિશાની સાથે)")}</label><textarea id="c_addr" maxlength="400">${esc(co.addr||"")}</textarea>
+   <label>${x("Payment mode","ચુકવણીની રીત")}</label><select id="c_pay"><option value="cod" ${co.pay==="cod"?"selected":""}>${x("Cash on Delivery","ઘરે રોકડા (COD)")}</option><option value="upi" ${co.pay==="upi"?"selected":""}>UPI</option></select>
+   <button class="btn block" id="orderBtn" style="margin-top:10px" onclick="placeOrder()">✅ ${x("Confirm Order","ઓર્ડર પાકો કરો")}</button></div></div></div></div>`;
+}
+function waLink(o,c){
+  const items=o.items.map(i=>`• ${i.en} × ${i.qty} = ₹${i.price*i.qty}`).join("\n");
+  const msg=`🌿 Bhoogwani Order\nOrder No: ${o.id}\n${items}\nTotal: ₹${o.total}\nPayment: ${o.pay==="cod"?"Cash on Delivery":"UPI"}\nName: ${c.name}\nPhone: ${c.phone}\nAddress: ${c.address}`;
+  return "https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg);
+}
+async function placeOrder(){
+  if(busy)return; keepForms();
+  const L=cartLines(), phone=normPhone(co.phone);
+  if(!L.length)return;
+  if(!co.name.trim()||!validPhone(phone)||co.addr.trim().length<5){toast(x("Please fill name, valid 10-digit mobile number and address.","કૃપા કરી નામ, સાચો ૧૦ અંકનો મોબાઈલ નંબર અને સરનામું ભરો."));return;}
+  busy=true; $("orderBtn").disabled=true; $("orderBtn").textContent=x("Please wait…","થોભો…");
+  if(!reqId) reqId=Date.now().toString(36)+Math.random().toString(36).slice(2,10)+Math.random().toString(36).slice(2,10);
+  const cust={name:co.name.trim(),phone,address:co.addr.trim()};
+  const r=await api({action:"order",reqId,name:cust.name,phone,address:cust.address,pay:co.pay,items:L.map(l=>({id:l.p.id,qty:l.qty})),hp:$("c_hp")?$("c_hp").value:""});
+  busy=false;
+  if(r.ok&&r.id){
+    cart={};co={pay:"cod"};reqId=null;render();loadPublic(true);
+    showModal(()=>`<div class="big">✅</div><h2 style="text-align:center">${x("Order received!","ઓર્ડર મળી ગયો!")}</h2>
+    <p style="text-align:center">${x("Order ID","ઓર્ડર નંબર")}: <b>#${esc(r.id)}</b> · ₹${r.total}<br>${x("Your order is saved. Please also send it on WhatsApp for faster confirmation. We will call you to confirm delivery.","તમારો ઓર્ડર નોંધાઈ ગયો છે. ઝડપી પુષ્ટિ માટે વોટ્સએપ પર પણ મોકલો. ડિલિવરી પાકી કરવા અમે તમને ફોન કરીશું.")}${r.pay==="upi"?`<br>${x("UPI payment details will be shared on call / WhatsApp.","UPI ચુકવણીની વિગતો ફોન / વોટ્સએપ પર આપવામાં આવશે.")}`:""}</p>
+    <div class="row" style="flex-direction:column"><a class="btn" href="${esc(waLink(r,cust))}" target="_blank" rel="noopener">💬 ${x("Send order on WhatsApp","વોટ્સએપ પર ઓર્ડર મોકલો")}</a><button class="btn alt" onclick="closeModal();location.hash='home'">${x("Close","બંધ કરો")}</button></div>`);
+    return;
+  }
+  if(["stock","gone","bad_input","rate"].includes(r.error)) reqId=null;   // network/server error ma same reqId (duplicate order nahi thay)
+  if(r.error==="stock"||r.error==="gone") loadPublic(true);
+  render(); toast(errMsg(r));
+}
+
+/* ================= MODAL + ADMIN LOGIN ================= */
+function showModal(fn){$("sheet").innerHTML=fn();$("modal").classList.add("on");reopen=()=>showModal(fn);}
+function closeModal(){$("modal").classList.remove("on");if(location.hash==="#admin"&&!token)location.hash="home";}
+function askPin(){
+  if(token){location.hash="admin";return;}
+  showModal(()=>`<h2>${x("Enter admin PIN","એડમિન પિન નાખો")}</h2><input id="pin" class="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  <div class="row" style="margin-top:16px"><button class="btn alt" onclick="closeModal()">${x("Close","બંધ કરો")}</button><button class="btn" id="pinBtn" onclick="checkPin()">${x("Open","ખોલો")}</button></div>`);
+  setTimeout(()=>{const e=$("pin");if(e){e.focus();e.addEventListener("keydown",k=>{if(k.key==="Enter")checkPin();});}},50);
+}
+async function checkPin(){
+  if(busy||!$("pin"))return; const pin=$("pin").value; if(!pin)return;
+  busy=true;$("pinBtn").disabled=true;
+  const r=await api({action:"login",pin});
+  busy=false;
+  if(!r.ok||!r.token){ if($("pin")){$("pin").value="";$("pinBtn").disabled=false;} toast(errMsg(r)); return; }
+  token=r.token; $("modal").classList.remove("on");
+  adminTab="orders"; adminOrders=[]; adminProducts=[];
+  if(location.hash==="#admin")route(); else location.hash="admin";
+  refreshAdmin();
+}
+
+/* ================= ADMIN ================= */
+async function adminCall(body){
+  const r=await api(Object.assign({token},body));
+  if(r.error==="auth"){token=null;toast(x("Session expired. Please log in again.","સેશન પૂરું થયું. ફરી લોગિન કરો."));render();askPin();}
+  return r;
+}
+async function refreshAdmin(){
+  if(!token)return;
+  const [o,p]=await Promise.all([adminCall({action:"orders"}),adminCall({action:"adminProducts"})]);
+  if(o.ok)adminOrders=o.orders; if(p.ok)adminProducts=p.products;
+  if(!o.ok||!p.ok){ if(token)toast(errMsg(!o.ok?o:p)); return; }
+  if(page==="admin"&&token){ render(); }
+}
+function setTab(k){adminTab=k;render();if(k==="orders"||k==="prod")refreshAdmin();}
+function exitAdmin(){const t=token;token=null;if(t)api({action:"logout",token:t});location.hash="home";}
+function adminHTML(){
+  const pend=adminOrders.filter(o=>o.status==="pending").length,done=adminOrders.filter(o=>o.status==="delivered").length,nr=adminOrders.filter(o=>o.status==="notreached").length;
+  const tb=(k,ic,e,g)=>`<button class="btn ${adminTab===k?"on":""}" onclick="setTab('${k}')"><span style="font-size:24px">${ic}</span>${x(e,g)}</button>`;
+  return `<div class="page"><div class="wrap"><div class="row" style="align-items:center;margin-bottom:12px"><h2>${x("Admin","માલિક પેનલ")}</h2><button class="btn alt sm" style="flex:0 0 auto" onclick="exitAdmin()">🚪 ${x("Exit","બહાર નીકળો")}</button></div>
+  <div class="tabs">${tb("orders","📦","Orders","ઓર્ડર")}${tb("prod","🌿","Products","પ્રોડક્ટ")}${tb("about","📝","About","વિશે")}${tb("set","⚙️","Settings","સેટિંગ")}</div>`
+  +(adminTab==="orders"?`<div class="sum"><div>${x("Pending","બાકી")}<b>${pend}</b></div><div class="d">${x("Delivered","પૂર્ણ")}<b>${done}</b></div><div class="f">${x("Not delivered","પહોંચ્યા નથી")}<b>${nr}</b></div></div>
+     <button class="btn alt sm block" style="margin-bottom:14px" onclick="refreshAdmin().then(()=>toast(x('Updated','અપડેટ થયું')))">🔄 ${x("Refresh orders","ઓર્ડર રિફ્રેશ કરો")}</button>`
+     +(adminOrders.length?adminOrders.map(orderHTML).join(""):`<div class="empty">${x("No orders yet.","હજી કોઈ ઓર્ડર નથી.")}</div>`)
+   :adminTab==="prod"?prodAdminHTML():adminTab==="set"?settingsHTML()
+   :`<div class="panel"><label>${x("About Us text (English)","અમારા વિશે (અંગ્રેજી)")}</label><textarea id="a_en" style="min-height:200px">${esc(about.en)}</textarea>
+     <label>${x("About Us text (Gujarati)","અમારા વિશે (ગુજરાતી)")}</label><textarea id="a_gu" style="min-height:200px">${esc(about.gu)}</textarea>
+     <button class="btn block" onclick="saveAbout()">💾 ${x("Save","સાચવો")}</button></div>`)+`</div></div>`;
+}
+const stTxt=s=>s==="pending"?x("Pending","બાકી"):s==="delivered"?x("Delivered","પૂર્ણ"):x("Not delivered","પહોંચ્યો નથી");
+function orderHTML(o){const pend=o.status==="pending";
+  return `<div class="order ${pend?"":o.status==="delivered"?"done":"fail"}"><div class="nm">#${esc(o.id)} · 👤 ${esc(o.name)}</div><div style="font-size:13px;color:var(--mute)">🕒 ${esc(o.ts)}</div><a class="tel" href="tel:+91${esc(o.phone)}">📞 ${esc(o.phone)}</a><div>📍 ${esc(o.address)}</div>
+  ${o.items.map(i=>`<div>🌿 ${esc(lang==="gu"?i.gu||i.en:i.en||i.gu)} × ${esc(i.qty)}</div>`).join("")}
+  <div><b>₹${o.total}</b> · ${o.pay==="cod"?x("Cash on Delivery","ઘરે રોકડા"):"UPI"} · ${stTxt(o.status)}</div>
+  ${pend?`<div class="row"><button class="btn" style="min-height:60px;font-size:18px" data-id="${esc(o.id)}" onclick="setStatus(this.dataset.id,'delivered')">✅ ${x("Delivered","પૂર્ણ થયું")}</button><button class="btn red" style="min-height:60px;font-size:18px" data-id="${esc(o.id)}" onclick="setStatus(this.dataset.id,'notreached')">❌ ${x("Not delivered","પહોંચ્યો નથી")}</button></div>`:`<button class="btn alt sm" data-id="${esc(o.id)}" onclick="setStatus(this.dataset.id,'pending')">↩ ${x("Back to pending","ફરી બાકી કરો")}</button>`}</div>`;}
+async function setStatus(id,st){
+  if(busy)return; busy=true;
+  const r=await adminCall({action:"setStatus",id,status:st}); busy=false;
+  if(!r.ok){ if(token)toast(errMsg(r)); return; }
+  const o=adminOrders.find(v=>v.id===id); if(o)o.status=st;
+  render(); loadPublic(true);
+}
+function prodForm(p,k){
+  const v=f=>esc(p&&p[f]!=null?p[f]:""), act=p?p.active:"yes";
+  return `<label>${x("Name (English)","નામ (અંગ્રેજી)")}</label><input id="pf_${k}_en" maxlength="200" value="${v("en")}">
+  <label>${x("Name (Gujarati)","નામ (ગુજરાતી)")}</label><input id="pf_${k}_gu" maxlength="200" value="${v("gu")}">
+  <div class="row"><div><label>${x("Price (₹)","કિંમત (₹)")}</label><input id="pf_${k}_price" type="number" inputmode="numeric" min="0" value="${v("price")}"></div><div><label>${x("Stock","સ્ટોક")}</label><input id="pf_${k}_stock" type="number" inputmode="numeric" min="0" value="${v("stock")}"></div></div>
+  <label>${x("Ingredients (English)","સામગ્રી (અંગ્રેજી)")}</label><textarea id="pf_${k}_descEn">${v("descEn")}</textarea>
+  <label>${x("Ingredients (Gujarati)","સામગ્રી (ગુજરાતી)")}</label><textarea id="pf_${k}_descGu">${v("descGu")}</textarea>
+  <label>📷 ${x("Photo link (https://… or Google Drive share link)","ફોટાની લિંક (https://… અથવા Google Drive share લિંક)")}</label><input id="pf_${k}_img" inputmode="url" value="${v("img")}">
+  <label>▶ ${x("Video link (button shows only if filled)","વિડિઓ લિંક (ભરો તો જ બટન દેખાશે)")}</label><input id="pf_${k}_video" inputmode="url" value="${v("video")}">
+  <label>${x("Show on website?","વેબસાઇટ પર બતાવવી?")}</label><select id="pf_${k}_active"><option value="yes" ${act==="no"?"":"selected"}>${x("Yes, visible","હા, દેખાશે")}</option><option value="no" ${act==="no"?"selected":""}>${x("No, hidden","ના, છુપાવેલ")}</option></select>`;
+}
+function prodAdminHTML(){
+  return `<div class="panel"><h3>➕ ${x("Add new product","નવી પ્રોડક્ટ ઉમેરો")}</h3>${prodForm(null,"new")}<button class="btn block" onclick="saveProd('new')">💾 ${x("Save","સાચવો")}</button></div><div style="height:24px"></div>`
+  +adminProducts.map((p,i)=>`<div class="panel" style="margin-bottom:18px"><h3>${esc(pname(p))}${p.active==="no"?` <span class="badge out">${x("Hidden","છુપાવેલ")}</span>`:""}</h3>${prodForm(p,i)}
+  <div class="row"><button class="btn" onclick="saveProd('${i}')">💾 ${x("Save","સાચવો")}</button><button class="btn red" onclick="saveProd('${i}',true)">🚫 ${x("Out of Stock","સ્ટોક ખાલી")}</button></div>
+  <button class="btn alt sm" onclick="delProd(${i})">🗑 ${x("Delete","કાઢી નાખો")}</button></div>`).join("");
+}
+async function saveProd(k,zero){
+  if(busy)return;
+  const g=f=>$("pf_"+k+"_"+f).value;
+  const price=Number(g("price")), stock=zero?0:Number(g("stock"));
+  if(!g("en").trim()&&!g("gu").trim()){toast(x("Enter a name","નામ લખો"));return;}
+  if(!(price>=0)||g("price")===""||!(stock>=0)||g("stock")===""||!Number.isInteger(stock)){toast(x("Enter valid price and stock","સાચી કિંમત અને સ્ટોક લખો"));return;}
+  const p={id:k==="new"?"":adminProducts[+k].id,en:g("en"),gu:g("gu"),price,stock,descEn:g("descEn"),descGu:g("descGu"),img:g("img"),video:g("video"),active:g("active")};
+  busy=true; const r=await adminCall({action:"saveProduct",product:p}); busy=false;
+  if(!r.ok){ if(token)toast(errMsg(r)); return; }
+  adminProducts=r.products; render(); loadPublic(true); toast(x("Saved","સચવાયું"));
+}
+async function delProd(i){
+  if(busy)return; const p=adminProducts[i]; if(!p)return;
+  if(!confirm(x("Delete this product?","આ પ્રોડક્ટ કાઢી નાખવી છે?")))return;
+  busy=true; const r=await adminCall({action:"deleteProduct",id:p.id}); busy=false;
+  if(!r.ok){ if(token)toast(errMsg(r)); return; }
+  adminProducts=r.products; render(); loadPublic(true); toast(x("Deleted","કાઢી નાખ્યું"));
+}
+async function saveAbout(){
+  if(busy)return; busy=true;
+  const en=$("a_en").value, gu=$("a_gu").value;
+  const r=await adminCall({action:"saveAbout",en,gu}); busy=false;
+  if(!r.ok){ if(token)toast(errMsg(r)); return; }
+  about={en,gu}; toast(x("Saved","સચવાયું")); loadPublic(true);
+}
+function settingsHTML(){return `<div class="panel"><h3>🖼 ${x("Logo","લોગો")}</h3><label>${x("Logo image link (https://… or Google Drive share link). Empty = default icon.","લોગો ફોટાની લિંક (https://… અથવા Google Drive share લિંક). ખાલી = ડિફોલ્ટ આઇકન.")}</label><input id="s_logo" inputmode="url" value="${esc(logo)}"><button class="btn block" onclick="saveLogo()">💾 ${x("Save","સાચવો")}</button></div><div style="height:24px"></div>
+  <div class="panel"><h3>🔑 ${x("Change admin PIN","એડમિન પિન બદલો")}</h3><label>${x("Current PIN","હાલનો પિન")}</label><input id="s_old" type="password" inputmode="numeric" maxlength="8" autocomplete="off"><label>${x("New PIN (4–8 digits)","નવો પિન (૪–૮ અંક)")}</label><input id="s_new" type="password" inputmode="numeric" maxlength="8" autocomplete="off"><button class="btn block" onclick="changePin()">💾 ${x("Save","સાચવો")}</button></div>`;}
+async function saveLogo(){
+  if(busy)return; busy=true;
+  const r=await adminCall({action:"saveLogo",logo:$("s_logo").value.trim()}); busy=false;
+  if(!r.ok){ if(token)toast(errMsg(r)); return; }
+  logo=r.logo||""; render(); toast(x("Saved","સચવાયું"));
+}
+async function changePin(){
+  if(busy)return; const o=$("s_old").value, n=$("s_new").value;
+  if(!/^\d{4,8}$/.test(n)){toast(x("Enter 4 to 8 digits","૪ થી ૮ અંક લખો"));return;}
+  busy=true; const r=await adminCall({action:"changePin",oldPin:o,newPin:n}); busy=false;
+  if(!r.ok){ if(token)toast(errMsg(r)); return; }
+  $("s_old").value="";$("s_new").value="";toast(x("PIN changed","પિન બદલાયો"));
+}
+
+/* ================= START ================= */
+route();
+loadPublic(false);
+</script>
+</body>
+</html>
