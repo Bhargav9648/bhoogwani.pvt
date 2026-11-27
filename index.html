@@ -54,6 +54,20 @@ nav a.on{border-color:#a9d58a;opacity:1}
 .hero{margin-top:8px}
 .hero h1{font-size:clamp(28px,5vw,44px);max-width:18ch}
 .hero p{max-width:58ch;color:var(--mute);font-size:18px;margin:18px 0 28px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{min-height:44px;padding:6px 16px;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+.chip.on{background:var(--green);border-color:var(--green);color:#fff}
+@media (prefers-color-scheme:dark){.chip.on{color:#14210e}}
+.chip.no{opacity:.55;text-decoration:line-through}
+.mrp{color:var(--mute);text-decoration:line-through;margin-left:8px;font-size:16px}
+.off{display:inline-block;background:#d94f2b;color:#fff;border-radius:6px;padding:0 8px;font-size:13px;font-weight:700;margin-left:6px}
+.thumbs{display:flex;gap:8px;padding:8px 24px 0}
+.thumbs img{width:56px;height:56px;aspect-ratio:1;object-fit:cover;border-radius:8px;border:2px solid var(--line);cursor:pointer}
+details.more{border-top:1px solid var(--line);padding-top:8px}
+details.more summary{cursor:pointer;font-weight:700;color:var(--green);min-height:44px;display:flex;align-items:center}
+.spec{padding:8px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.spec b{display:block;color:var(--brown)}
+@media (prefers-color-scheme:dark){.spec b{color:var(--ink)}}
 .disc{background:var(--warn);color:var(--warnink);border-left:6px solid var(--green);padding:14px 18px;margin:0 0 28px;border-radius:10px;font-size:15px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:32px;margin:20px 0 44px}
 .card,.panel,.pill{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
@@ -141,12 +155,27 @@ textarea{min-height:92px}
 <script>
 "use strict";
 /* ================= CONFIGURATION ================= */
+// ▼▼ Navi Google Sheet no Apps Script "Web app" URL ahi quotes ni andar paste karo ▼▼
 const API_URL = "https://script.google.com/macros/s/AKfycbxGXJmmeXof82Y_jNBSTbAGUDTmBBl7CmA513QfFADhIJMt0w3YjGsTAR3dOaRV1vE-/exec";
-const WHATSAPP_NUMBER = "918238158243";   // WhatsApp (orders)
-const CALLING_NUMBER  = "9624926441";     // phone call
-const EMAIL = "bhoogwanipvt@gmail.com";
-const YOUTUBE_CHANNEL = "https://www.youtube.com/channel/UC3-M_2h90w5X0n7cxdsekOg";
-const LOCATION_TXT = "Savarkundla, Amreli, Gujarat — 364515";
+// Niche ni value default che; Google Sheet na Settings tab ma bharo to te vaparase
+let WHATSAPP_NUMBER = "918238158243";   // WhatsApp (orders)
+let CALLING_NUMBER  = "9624926441";     // phone call
+let EMAIL = "bhoogwanipvt@gmail.com";
+let YOUTUBE_CHANNEL = "https://www.youtube.com/channel/UC3-M_2h90w5X0n7cxdsekOg";
+let YT_NAME = "gujarat bandhu ffg";
+let LOC = {en:"Bhenkra, Savarkundla, Amreli, Gujarat", gu:"ભેંકરા, સાવરકુંડલા, અમરેલી, ગુજરાત"};
+const locTxt = () => lang==="gu" ? LOC.gu : LOC.en;
+function applyContact(c){
+  if(!c || typeof c !== "object") return;
+  const d = s => String(s||"").replace(/\D/g,"");
+  if(c.addressEn && c.addressEn.trim()) LOC.en = c.addressEn.trim();
+  if(c.addressGu && c.addressGu.trim()) LOC.gu = c.addressGu.trim(); else if(c.addressEn && c.addressEn.trim()) LOC.gu = c.addressEn.trim();
+  const call = normPhone(c.call); if(validPhone(call)) CALLING_NUMBER = call;
+  let wa = d(c.wa); if(wa.length === 10) wa = "91" + wa; if(/^91[6-9]\d{9}$/.test(wa)) WHATSAPP_NUMBER = wa;
+  if(/^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(String(c.email||"").trim())) EMAIL = c.email.trim();
+  if(c.ytName && c.ytName.trim()) YT_NAME = c.ytName.trim().slice(0,60);
+  if(/^[\w-]{10,40}$/.test(String(c.ytId||"").trim())) YOUTUBE_CHANNEL = "https://www.youtube.com/channel/" + c.ytId.trim();
+}
 const API_READY = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(API_URL);
 
 /* ================= HELPERS ================= */
@@ -164,7 +193,7 @@ const ph = (e, c) => "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns
 const PH = ph("🌿", "#dfe9cf");
 function toast(m){const d=document.createElement("div");d.className="toast";d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}
 function normPhone(s){
-  let d=String(s||"").replace(/[\u0AE6-\u0AEF]/g,c=>String(c.charCodeAt(0)-0x0AE6)).replace(/\D/g,"");
+  let d=String(s||"").replace(/[૦-૯]/g,c=>String(c.charCodeAt(0)-0x0AE6)).replace(/\D/g,"");
   if(d.length===12&&d.startsWith("91"))d=d.slice(2);else if(d.length===11&&d.startsWith("0"))d=d.slice(1);
   return d;
 }
@@ -213,13 +242,20 @@ function loadCart(){
     return o;
   }catch(e){ return {}; }
 }
-let page="home", loadState="loading", products=[], about={en:"",gu:""}, logo="", lastLoad=0;
+let page="home", loadState="loading", products=[], about={en:"",gu:""}, logo="", lastLoad=0, pages={}, contactData={}, catFilter="all", selVar={};
 let cart=loadCart(), co={pay:"cod"}, fb={}, rating=0, reqId=null;
 let token=ssGet("bw_admin")||null, adminTab="orders", adminOrders=[], adminProducts=[];
 let busy=false, reopen=()=>{};
 const saveCart = () => lsSet("bw_cart", JSON.stringify(cart));
 function setToken(t){ token = t || null; if(token) ssSet("bw_admin", token); else ssDel("bw_admin"); }
-const pname=p=>lang==="gu"?(p.gu||p.en):(p.en||p.gu), pdesc=p=>lang==="gu"?(p.descGu||p.descEn):(p.descEn||p.descGu);
+const pname=p=>lang==="gu"?(p.gu||p.en):(p.en||p.gu);
+const T=(p,k)=>lang==="gu"?(p[k+"Gu"]||p[k+"En"]||""):(p[k+"En"]||p[k+"Gu"]||"");
+const plabel=p=>lang==="gu"?(p.labelGu||p.labelEn||""):(p.labelEn||p.labelGu||"");
+const pfullL=(p,L)=>{const b=L==="gu"?(p.gu||p.en):(p.en||p.gu), l=L==="gu"?(p.labelGu||p.labelEn):(p.labelEn||p.labelGu); return b+(l?" ("+l+")":"");};
+const pfull=p=>pfullL(p,lang);
+const pg=(k,f)=>{const o=pages[k]; return o?String(o[(f==="t"?"title":"body")+(lang==="gu"?"Gu":"En")]||"").trim():"";};
+const paras=t=>String(t||"").split("\n").map(s=>s.trim()).filter(Boolean);
+function groups(){const m=new Map(); products.forEach(p=>{const k=p.group||p.id; if(!m.has(k))m.set(k,[]); m.get(k).push(p);}); return [...m.values()].map(v=>v.slice().sort((a,b)=>(a.qty||0)-(b.qty||0)));}
 
 async function loadPublic(silent){
   if(!API_READY){ loadState="error"; render(); return; }
@@ -227,9 +263,10 @@ async function loadPublic(silent){
     const r = await fetch(API_URL + "?action=public&_=" + Date.now());
     const j = await r.json();
     if(!j || !j.ok || !Array.isArray(j.products)) throw new Error("bad");
-    const changed = JSON.stringify([j.products,j.about,j.logo]) !== JSON.stringify([products,about,logo]);
+    const newPages = j.pages && typeof j.pages === "object" ? j.pages : {};
+    const changed = JSON.stringify([j.products,j.about,j.logo,newPages,j.contact]) !== JSON.stringify([products,about,logo,pages,contactData]);
     const wasLoaded = loadState === "ok";
-    products = j.products; about = j.about || about; logo = j.logo || ""; loadState = "ok"; lastLoad = Date.now();
+    products = j.products; about = j.about || about; logo = j.logo || ""; pages = newPages; contactData = j.contact || {}; applyContact(contactData); loadState = "ok"; lastLoad = Date.now();
     const dropped = reconcileCart();
     if(changed || !wasLoaded || dropped){ keepForms(); render(); }
     if(dropped) toast(x("Cart updated as stock changed.","સ્ટોક બદલાવાથી કાર્ટ અપડેટ થયું."));
@@ -299,8 +336,8 @@ refund:{t:["Return & Refund Policy","રિટર્ન અને રિફં�
      "ઓર્ડર રદ કરવા માટે તે મોકલાય તે પહેલાં અમારો સંપર્ક કરો."]}
 };
 function policyHTML(k){
-  const p = POL[k], L = lang === "gu" ? p.gu : p.en;
-  return `<div class="page policy"><div class="wrap"><h2>${x(p.t[0], p.t[1])}</h2>${L.map(s=>`<p>${esc(s)}</p>`).join("")}<a class="btn alt" href="#home">← ${x("Back to home","હોમ પર પાછા")}</a></div></div>`;
+  const p = POL[k], sb = paras(pg(k,"b")), L = sb.length ? sb : (lang === "gu" ? p.gu : p.en);
+  return `<div class="page policy"><div class="wrap"><h2>${esc(pg(k,"t")||x(p.t[0], p.t[1]))}</h2>${L.map(s=>`<p>${esc(s)}</p>`).join("")}<a class="btn alt" href="#home">← ${x("Back to home","હોમ પર પાછા")}</a></div></div>`;
 }
 
 /* ================= ROUTER ================= */
@@ -315,14 +352,14 @@ window.addEventListener("hashchange", route);
 function toggleLang(){ keepForms(); lang = lang==="gu"?"en":"gu"; render(); if($("modal").classList.contains("on")) reopen(); }
 function footHTML(){
   return `<div class="flinks"><a href="#privacy">${x("Privacy Policy","ગોપનીયતા નીતિ")}</a><a href="#terms">${x("Terms & Conditions","નિયમો અને શરતો")}</a><a href="#shipping">${x("Shipping Policy","શિપિંગ નીતિ")}</a><a href="#refund">${x("Return & Refund Policy","રિટર્ન અને રિફંડ નીતિ")}</a></div>
-  <div class="fcont"><a href="tel:+91${CALLING_NUMBER}">📞 +91 ${CALLING_NUMBER}</a><a href="https://wa.me/${WHATSAPP_NUMBER}" target="_blank" rel="noopener">💬 +91 ${WHATSAPP_NUMBER.slice(2)}</a><a href="mailto:${EMAIL}">✉️ ${EMAIL}</a><a href="${YOUTUBE_CHANNEL}" target="_blank" rel="noopener">▶ gujarat bandhu ffg</a></div>
-  <div class="floc">📍 ${x("Operational location","કાર્યસ્થળ")}: ${LOCATION_TXT}</div>
+  <div class="fcont"><a href="tel:+91${CALLING_NUMBER}">📞 +91 ${CALLING_NUMBER}</a><a href="https://wa.me/${WHATSAPP_NUMBER}" target="_blank" rel="noopener">💬 +91 ${WHATSAPP_NUMBER.slice(2)}</a><a href="mailto:${EMAIL}">✉️ ${EMAIL}</a><a href="${YOUTUBE_CHANNEL}" target="_blank" rel="noopener">▶ ${esc(YT_NAME)}</a></div>
+  <div class="floc">📍 ${x("Operational location","કાર્યસ્થળ")}: ${esc(locTxt())}</div>
   <div class="fcopy">© Bhoogwani · ભૂગવાણી · bhoogwani.pvt.ltd</div>
   <button onclick="askPin()">${x("Admin login","માલિક લોગિન")}</button>`;
 }
 function render(){
   document.documentElement.lang = lang;
-  $("hsub").textContent = x("Doctor-guided Ayurvedic Supportive Care","ડૉક્ટર-માર્ગદર્શિત આયુર્વેદિક સહાયક સંભાળ");
+  $("hsub").textContent = pg("header_tagline","b") || x("Doctor-guided Ayurvedic Supportive Care","ડૉક્ટર-માર્ગદર્શિત આયુર્વેદિક સહાયક સંભાળ");
   const lg = driveImg(logo);
   $("logoBox").innerHTML = lg ? `<img src="${esc(lg)}" alt="Bhoogwani" onerror="this.onerror=null;if(this.parentNode)this.parentNode.textContent='🌿'">` : "🌿";
   $("foot").innerHTML = footHTML();
@@ -341,36 +378,72 @@ function needData(fn){
   return fn();
 }
 function retryLoad(){ loadState="loading"; render(); loadPublic(false); }
-const DISC = `<div class="disc">⚠️ દરેક ઔષધિ જુદી જુદી લાક્ષણિકતા ધરાવતી હોય, ડૉક્ટરની સલાહ પ્રમાણે ઉપયોગ કરવો.<br>Every herb has unique properties; please use as per Doctor’s advice.</div>`;
+const DISC_DEF = `⚠️ દરેક ઔષધિ જુદી જુદી લાક્ષણિકતા ધરાવતી હોય, ડૉક્ટરની સલાહ પ્રમાણે ઉપયોગ કરવો.<br>Every herb has unique properties; please use as per Doctor’s advice.`;
+const discHTML = () => { const t = pg("home_disclaimer","b"); return `<div class="disc">${t ? "⚠️ " + esc(t) : DISC_DEF}</div>`; };
 
 /* ================= PAGES ================= */
-function homeHTML(){return `<div class="page"><div class="wrap"><div class="hero">
- <h1>${x("Healing with Nature, Guided by Doctors","પ્રકૃતિ સાથે સ્વસ્થતા, ડૉક્ટરના માર્ગદર્શન સાથે")}</h1>
- <p><b>Friend • Philosopher • Guide</b><br>${x("Doctor-guided Ayurvedic Supportive Care. Every formula begins with a doctor’s understanding of the person, not just the symptom, and uses time-tested herbs in their natural form.","ડૉક્ટર-માર્ગદર્શિત આયુર્વેદિક સહાયક સંભાળ. દરેક ઔષધિ વ્યક્તિને સમજીને બને છે, માત્ર લક્ષણને નહીં, અને સદીઓ જૂની જડીબુટ્ટીઓ તેના કુદરતી સ્વરૂપમાં વપરાય છે.")}</p>
- <a class="btn" href="#products">🌿 ${x("Browse products","પ્રોડક્ટ્સ જુઓ")}</a><div class="pillars">
-  <div class="pill"><div class="ic">🌱</div><h3>${x("100% Herbal","૧૦૦% હર્બલ")}</h3><p>${x("Pure herbs, no harsh chemicals.","શુદ્ધ જડીબુટ્ટીઓ, કઠોર રસાયણો નહીં.")}</p></div>
+function homeHTML(){
+  const feats = paras(pg("home_features","b")).map(l => l.split("|").map(s => s.trim())).filter(a => a.length >= 3);
+  const pill = feats.length ? feats.slice(0,8).map(a => `<div class="pill"><div class="ic">${esc(a[0])}</div><h3>${esc(a[1])}</h3><p>${esc(a.slice(2).join(" | "))}</p></div>`).join("")
+   : `<div class="pill"><div class="ic">🌱</div><h3>${x("100% Herbal","૧૦૦% હર્બલ")}</h3><p>${x("Pure herbs, no harsh chemicals.","શુદ્ધ જડીબુટ્ટીઓ, કઠોર રસાયણો નહીં.")}</p></div>
   <div class="pill"><div class="ic">🩺</div><h3>${x("Doctor Formulated","ડૉક્ટર દ્વારા બનાવેલ")}</h3><p>${x("Every blend is guided by an Ayurvedic doctor.","દરેક મિશ્રણ આયુર્વેદિક ડૉક્ટરના માર્ગદર્શનથી બને છે.")}</p></div>
-  <div class="pill"><div class="ic">🔍</div><h3>${x("Transparent Sourcing","પારદર્શક સ્ત્રોત")}</h3><p>${x("Every herb is listed openly on the pack.","દરેક જડીબુટ્ટી પેક પર સ્પષ્ટ લખેલી હોય છે.")}</p></div></div>
- ${DISC}</div></div></div>`;}
+  <div class="pill"><div class="ic">🔍</div><h3>${x("Transparent Sourcing","પારદર્શક સ્ત્રોત")}</h3><p>${x("Every herb is listed openly on the pack.","દરેક જડીબુટ્ટી પેક પર સ્પષ્ટ લખેલી હોય છે.")}</p></div>`;
+  const body = pg("home_hero","b") || x("Doctor-guided Ayurvedic Supportive Care. Every formula begins with a doctor’s understanding of the person, not just the symptom, and uses time-tested herbs in their natural form.","ડૉક્ટર-માર્ગદર્શિત આયુર્વેદિક સહાયક સંભાળ. દરેક ઔષધિ વ્યક્તિને સમજીને બને છે, માત્ર લક્ષણને નહીં, અને સદીઓ જૂની જડીબુટ્ટીઓ તેના કુદરતી સ્વરૂપમાં વપરાય છે.");
+  return `<div class="page"><div class="wrap"><div class="hero">
+ <h1>${esc(pg("home_hero","t") || x("Healing with Nature, Guided by Doctors","પ્રકૃતિ સાથે સ્વસ્થતા, ડૉક્ટરના માર્ગદર્શન સાથે"))}</h1>
+ <p><b>${esc(pg("home_tagline","b") || "Friend • Philosopher • Guide")}</b><br>${esc(body)}</p>
+ <a class="btn" href="#products">🌿 ${x("Browse products","પ્રોડક્ટ્સ જુઓ")}</a><div class="pillars">${pill}</div>
+ ${discHTML()}</div></div></div>`;}
 
-function productsHTML(){return `<div class="page"><div class="wrap"><h2>${x("Our Products","અમારી પ્રોડક્ટ્સ")}</h2>
- <p class="lead">${x("Doctor-guided Ayurvedic supportive care, made from pure herbs.","શુદ્ધ જડીબુટ્ટીઓમાંથી બનેલી ડૉક્ટર-માર્ગદર્શિત આયુર્વેદિક સહાયક ઔષધિઓ.")}</p>
- ${products.length?`<div class="grid">${products.map(cardHTML).join("")}</div>`:`<div class="empty">${x("Products coming soon.","પ્રોડક્ટ્સ ટૂંક સમયમાં આવશે.")}</div>`}${DISC}</div></div>`;}
-function cardHTML(p){const s=p.stock>0, v=safeUrl(p.video);return `<article class="card"><img src="${esc(driveImg(p.img)||PH)}" alt="${esc(pname(p))}" loading="lazy" onerror="this.onerror=null;this.src=PH"><div class="pad">
-  <h3>${esc(pname(p))}</h3><div><span class="price">₹${p.price}</span><span class="badge ${s?"":"out"}">${s?x("In Stock","સ્ટોકમાં છે"):x("Out of Stock","સ્ટોક ખાલી")}</span></div><div class="avail">📦 ${x("Available","ઉપલબ્ધ")}: <b>${p.stock}</b></div>
-  <div class="ing"><b>${x("Ingredients","સામગ્રી")}:</b> ${esc(pdesc(p))}</div>
+function productsHTML(){
+  const all = groups(), cats = [...new Set(all.map(v => v[0].cat))];
+  if(!cats.includes(catFilter)) catFilter = "all";
+  const list = catFilter==="all" ? all : all.filter(v => v[0].cat===catFilter);
+  const CN = {ayurvedic:["Ayurvedic","આયુર્વેદિક"], agriculture:["Agriculture","ખેતીવાડી"]};
+  const chips = cats.length > 1 ? `<div class="chips" style="margin:0 0 18px">${["all",...cats].map(c => `<button class="chip ${catFilter===c?"on":""}" data-c="${c}" onclick="setCat(this.dataset.c)">${c==="all"?x("All","બધા"):x(CN[c][0],CN[c][1])}</button>`).join("")}</div>` : "";
+  return `<div class="page"><div class="wrap"><h2>${esc(pg("products_intro","t") || x("Our Products","અમારી પ્રોડક્ટ્સ"))}</h2>
+ <p class="lead">${esc(pg("products_intro","b") || x("Doctor-guided Ayurvedic supportive care, made from pure herbs.","શુદ્ધ જડીબુટ્ટીઓમાંથી બનેલી ડૉક્ટર-માર્ગદર્શિત આયુર્વેદિક સહાયક ઔષધિઓ."))}</p>
+ ${chips}${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:`<div class="empty">${x("Products coming soon.","પ્રોડક્ટ્સ ટૂંક સમયમાં આવશે.")}</div>`}${discHTML()}</div></div>`;}
+function setCat(c){catFilter=c;render();}
+const nl2br = t => esc(t).replace(/\n/g,"<br>");
+function cardHTML(vs){
+  const g = vs[0].group||vs[0].id, p = vs.find(v => v.id===selVar[g]) || vs.find(v => v.stock>0) || vs[0], s = p.stock>0, v = safeUrl(p.video);
+  const off = p.mrp>p.price ? Math.round((p.mrp-p.price)*100/p.mrp) : 0;
+  const lbl = plabel(p);
+  const sizes = vs.length>1 ? `<div><div class="ing"><b>${x("Pack size","પેક સાઈઝ")}:</b></div><div class="chips" style="margin-top:6px">${vs.map(o => `<button type="button" class="chip ${o.id===p.id?"on":""} ${o.stock>0?"":"no"}" data-g="${esc(g)}" data-id="${esc(o.id)}" onclick="pickVar(this)">${esc(plabel(o)||("₹"+o.price))} · ₹${o.price}</button>`).join("")}</div></div>`
+    : (lbl ? `<div class="avail">⚖️ ${x("Quantity","જથ્થો")}: <b>${esc(lbl)}</b></div>` : "");
+  const specs = [["ingredients","Ingredients","સામગ્રી"],["benefits","Benefits","ફાયદા"],["usage","How to use","ઉપયોગની રીત"],["dosage","Dosage","માત્રા"],["precautions","Precautions","સાવચેતી"]]
+    .map(a => [x(a[1],a[2]), T(p,a[0])]).filter(a => a[1].trim());
+  if((p.shelfLife||"").trim()) specs.push([x("Shelf life","ઉપયોગની મુદત"), p.shelfLife]);
+  if((p.madeBy||"").trim()) specs.push([x("Made by","બનાવનાર"), p.madeBy]);
+  if((p.tags||"").trim()) specs.push([x("Tags","ટૅગ્સ"), p.tags]);
+  const desc = T(p,"desc");
+  const imgs = [p.img, ...(p.imgs||[])].map(driveImg).filter(Boolean);
+  return `<article class="card" data-g="${esc(g)}"><img class="mainimg" src="${esc(imgs[0]||PH)}" alt="${esc(pname(p))}" loading="lazy" onerror="this.onerror=null;this.src=PH">
+  ${imgs.length>1?`<div class="thumbs">${imgs.map(u=>`<img src="${esc(u)}" alt="" onclick="this.closest('.card').querySelector('.mainimg').src=this.src">`).join("")}</div>`:""}<div class="pad">
+  <h3>${esc(pname(p))}</h3><div><span class="price">₹${p.price}</span>${off?`<span class="mrp">₹${p.mrp}</span><span class="off">${off}% ${x("OFF","છૂટ")}</span>`:""}<span class="badge ${s?"":"out"}">${s?x("In Stock","સ્ટોકમાં છે"):x("Out of Stock","સ્ટોક ખાલી")}</span></div>${sizes}<div class="avail">📦 ${x("Available","ઉપલબ્ધ")}: <b>${p.stock}</b></div>
+  ${desc?`<div class="ing">${nl2br(desc)}</div>`:""}
+  ${specs.length?`<details class="more"><summary>${x("Product details","પ્રોડક્ટની વિગતો")}</summary>${specs.map(a=>`<div class="spec"><b>${esc(a[0])}</b>${nl2br(a[1])}</div>`).join("")}</details>`:""}
   <div class="row" style="margin-top:auto">${v?`<a class="btn alt" href="${esc(v)}" target="_blank" rel="noopener">▶ ${x("Watch Video","વિડિઓ જુઓ")}</a>`:""}
-  <button class="btn" ${s?"":"disabled"} data-id="${esc(p.id)}" onclick="addCart(this.dataset.id)">🛒 ${x("Add to Cart","કાર્ટમાં ઉમેરો")}</button></div></div></article>`;}
+  <button class="btn" ${s?"":"disabled"} data-id="${esc(p.id)}" onclick="addCart(this.dataset.id)">🛒 ${x("Add to Cart","કાર્ટમાં ઉમેરો")}${lbl?` · ${esc(lbl)}`:""}</button></div></div></article>`;}
+function pickVar(el){
+  const g = el.dataset.g, vs = groups().find(v => (v[0].group||v[0].id)===g); if(!vs) return;
+  selVar[g] = el.dataset.id;
+  const card = el.closest(".card"), old = card.querySelector("details.more"), wasOpen = old && old.open;
+  const t = document.createElement("div"); t.innerHTML = cardHTML(vs); const n = t.firstElementChild;
+  if(wasOpen && n.querySelector("details.more")) n.querySelector("details.more").open = true;
+  card.replaceWith(n);
+}
 
-function aboutHTML(){const t=lang==="gu"?about.gu:about.en;return `<div class="page"><div class="wrap story"><h2>${x("About Us","અમારા વિશે")}</h2><p class="lead">Bhoogwani · ભૂગવાણી</p>${String(t||"").split("\n").filter(s=>s.trim()).map(p=>`<p>${esc(p)}</p>`).join("")}<div class="panel" style="margin-top:28px"><h3>▶ YouTube</h3><p>${x("Watch our videos on our YouTube channel “gujarat bandhu ffg”.","અમારી YouTube ચેનલ “gujarat bandhu ffg” પર અમારા વિડિઓ જુઓ.")}</p><a class="btn" href="${YOUTUBE_CHANNEL}" target="_blank" rel="noopener">▶ gujarat bandhu ffg</a></div></div></div>`;}
+function aboutHTML(){const t=lang==="gu"?about.gu:about.en;return `<div class="page"><div class="wrap story"><h2>${x("About Us","અમારા વિશે")}</h2><p class="lead">Bhoogwani · ભૂગવાણી</p>${String(t||"").split("\n").filter(s=>s.trim()).map(p=>`<p>${esc(p)}</p>`).join("")}<div class="panel" style="margin-top:28px"><h3>▶ YouTube</h3><p>${x("Watch our videos on our YouTube channel “"+esc(YT_NAME)+"”.","અમારી YouTube ચેનલ “"+esc(YT_NAME)+"” પર અમારા વિડિઓ જુઓ.")}</p><a class="btn" href="${YOUTUBE_CHANNEL}" target="_blank" rel="noopener">▶ ${esc(YT_NAME)}</a></div></div></div>`;}
 
-function contactHTML(){return `<div class="page"><div class="wrap"><h2>${x("Contact & Feedback","સંપર્ક અને પ્રતિસાદ")}</h2><p class="lead">${x("Questions about a product? We are happy to help.","પ્રોડક્ટ વિશે પ્રશ્ન છે? અમે મદદ કરવા તૈયાર છીએ.")}</p>
+function contactHTML(){return `<div class="page"><div class="wrap"><h2>${esc(pg("contact_intro","t") || x("Contact & Feedback","સંપર્ક અને પ્રતિસાદ"))}</h2><p class="lead">${esc(pg("contact_intro","b") || x("Questions about a product? We are happy to help.","પ્રોડક્ટ વિશે પ્રશ્ન છે? અમે મદદ કરવા તૈયાર છીએ."))}</p>
  <div class="two"><div class="panel"><h3>${x("Get in touch","અમારો સંપર્ક કરો")}</h3>
   <a class="btn" href="tel:+91${CALLING_NUMBER}">📞 ${x("Call us (not WhatsApp)","ફોન કરો (વોટ્સએપ નથી)")} +91 ${CALLING_NUMBER}</a>
   <a class="btn" href="https://wa.me/${WHATSAPP_NUMBER}" target="_blank" rel="noopener">💬 ${x("WhatsApp orders","વોટ્સએપ (ઓર્ડર)")} +91 ${WHATSAPP_NUMBER.slice(2)}</a>
   <a class="btn alt" href="mailto:${EMAIL}">✉️ ${EMAIL}</a>
-  <a class="btn alt" href="${YOUTUBE_CHANNEL}" target="_blank" rel="noopener">▶ YouTube · gujarat bandhu ffg</a>
-  <p class="ing" style="margin:6px 0 0">📍 ${LOCATION_TXT}</p></div>
+  <a class="btn alt" href="${YOUTUBE_CHANNEL}" target="_blank" rel="noopener">▶ YouTube · ${esc(YT_NAME)}</a>
+  <p class="ing" style="margin:6px 0 0">📍 ${esc(locTxt())}</p></div>
  <div class="panel" id="feedback"><h3>${x("Share your feedback","તમારો પ્રતિસાદ આપો")}</h3>
   <input class="hp" id="fb_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
   <label>${x("Your name","તમારું નામ")}</label><input id="fb_name" maxlength="80" value="${esc(fb.name||"")}" autocomplete="name">
@@ -410,7 +483,7 @@ function cartHTML(){
   const L=cartLines(),total=L.reduce((a,l)=>a+l.p.price*l.qty,0);
   if(!L.length)return `<div class="page"><div class="wrap"><h2>${x("Cart & Order","કાર્ટ અને ઓર્ડર")}</h2><div class="empty">🛒<br>${x("Your cart is empty.","તમારું કાર્ટ ખાલી છે.")}</div><a class="btn" href="#products">${x("Browse products","પ્રોડક્ટ્સ જુઓ")}</a></div></div>`;
   return `<div class="page"><div class="wrap"><h2>${x("Cart & Order","કાર્ટ અને ઓર્ડર")}</h2><div class="two" style="margin-top:20px">
-  <div class="panel">${L.map(l=>`<div class="item"><div class="nm">${esc(pname(l.p))}<br><span class="ing">₹${l.p.price}</span></div>
+  <div class="panel">${L.map(l=>`<div class="item"><div class="nm">${esc(pfull(l.p))}<br><span class="ing">₹${l.p.price}</span></div>
    <div class="qty"><button data-id="${esc(l.p.id)}" onclick="chgQty(this.dataset.id,-1)" aria-label="-">−</button><b>${l.qty}</b><button data-id="${esc(l.p.id)}" onclick="chgQty(this.dataset.id,1)" aria-label="+">+</button></div>
    <b>₹${l.p.price*l.qty}</b></div>`).join("")}<div class="tot"><span>${x("Total","કુલ રકમ")}</span><span>₹${total}</span></div></div>
   <div class="panel"><h3>${x("Delivery details","ડિલિવરી વિગતો")}</h3>
@@ -443,7 +516,7 @@ async function placeOrder(){
   busy=true; $("orderBtn").disabled=true; $("orderBtn").textContent=x("Please wait…","થોભો…");
   if(!reqId) reqId=Date.now().toString(36)+Math.random().toString(36).slice(2,10)+Math.random().toString(36).slice(2,10);
   const cust={name:co.name.trim(),phone,address:co.addr.trim(),pay:co.pay};
-  const snap=L.map(l=>({en:l.p.en,gu:l.p.gu,qty:l.qty,price:l.p.price}));
+  const snap=L.map(l=>({en:pfullL(l.p,"en"),gu:pfullL(l.p,"gu"),qty:l.qty,price:l.p.price}));
   const r=await api({action:"order",reqId,name:cust.name,phone,address:cust.address,pay:co.pay,items:L.map(l=>({id:l.p.id,qty:l.qty})),hp:$("c_hp")?$("c_hp").value:""});
   busy=false;
   if(r.ok&&r.id){
@@ -522,16 +595,30 @@ async function setStatus(id,st){
   const o=adminOrders.find(v=>String(v.id)===String(id)); if(o)o.status=st;
   render(); loadPublic(true);
 }
+const PF_LONG=[["descEn","Description (English)","વર્ણન (અંગ્રેજી)"],["descGu","Description (Gujarati)","વર્ણન (ગુજરાતી)"],
+["ingredientsEn","Ingredients (English)","સામગ્રી (અંગ્રેજી)"],["ingredientsGu","Ingredients (Gujarati)","સામગ્રી (ગુજરાતી)"],
+["benefitsEn","Benefits (English)","ફાયદા (અંગ્રેજી)"],["benefitsGu","Benefits (Gujarati)","ફાયદા (ગુજરાતી)"],
+["usageEn","How to use (English)","ઉપયોગની રીત (અંગ્રેજી)"],["usageGu","How to use (Gujarati)","ઉપયોગની રીત (ગુજરાતી)"],
+["dosageEn","Dosage (English)","માત્રા (અંગ્રેજી)"],["dosageGu","Dosage (Gujarati)","માત્રા (ગુજરાતી)"],
+["precautionsEn","Precautions (English)","સાવચેતી (અંગ્રેજી)"],["precautionsGu","Precautions (Gujarati)","સાવચેતી (ગુજરાતી)"]];
+const PF_SHORT=[["shelfLife","Shelf life (e.g. 12 months)","ઉપયોગની મુદત (દા.ત. ૧૨ મહિના)"],["madeBy","Made by","બનાવનાર"],["tags","Tags (comma separated)","ટૅગ્સ (અલ્પવિરામથી અલગ)"]];
+const PF_URL=[["img","📷 Photo link (https://… or Google Drive share link)","📷 ફોટાની લિંક (https://… અથવા Google Drive share લિંક)"],["img2","📷 Photo 2 (optional)","📷 ફોટો ૨ (વૈકલ્પિક)"],["img3","📷 Photo 3 (optional)","📷 ફોટો ૩ (વૈકલ્પિક)"],["video","▶ Video link (button shows only if filled)","▶ વિડિઓ લિંક (ભરો તો જ બટન દેખાશે)"]];
 function prodForm(p,k){
-  const v=f=>esc(p&&p[f]!=null?p[f]:""), act=p?p.active:"yes";
+  const v=f=>esc(p&&p[f]!=null?p[f]:""), act=p?p.active:"yes", cat=p?p.category:"ayurvedic", un=p?p.qty_unit:"g";
+  const opt=(val,cur,t)=>`<option value="${val}" ${cur===val?"selected":""}>${t}</option>`;
   return `<label>${x("Name (English)","નામ (અંગ્રેજી)")}</label><input id="pf_${k}_en" maxlength="200" value="${v("en")}">
   <label>${x("Name (Gujarati)","નામ (ગુજરાતી)")}</label><input id="pf_${k}_gu" maxlength="200" value="${v("gu")}">
-  <div class="row"><div><label>${x("Price (₹)","કિંમત (₹)")}</label><input id="pf_${k}_price" type="number" inputmode="numeric" min="0" value="${v("price")}"></div><div><label>${x("Stock","સ્ટોક")}</label><input id="pf_${k}_stock" type="number" inputmode="numeric" min="0" value="${v("stock")}"></div></div>
-  <label>${x("Ingredients (English)","સામગ્રી (અંગ્રેજી)")}</label><textarea id="pf_${k}_descEn">${v("descEn")}</textarea>
-  <label>${x("Ingredients (Gujarati)","સામગ્રી (ગુજરાતી)")}</label><textarea id="pf_${k}_descGu">${v("descGu")}</textarea>
-  <label>📷 ${x("Photo link (https://… or Google Drive share link)","ફોટાની લિંક (https://… અથવા Google Drive share લિંક)")}</label><input id="pf_${k}_img" inputmode="url" value="${v("img")}">
-  <label>▶ ${x("Video link (button shows only if filled)","વિડિઓ લિંક (ભરો તો જ બટન દેખાશે)")}</label><input id="pf_${k}_video" inputmode="url" value="${v("video")}">
-  <label>${x("Show on website?","વેબસાઇટ પર બતાવવી?")}</label><select id="pf_${k}_active"><option value="yes" ${act==="no"?"":"selected"}>${x("Yes, visible","હા, દેખાશે")}</option><option value="no" ${act==="no"?"selected":""}>${x("No, hidden","ના, છુપાવેલ")}</option></select>`;
+  <label>${x("Category","કેટેગરી")}</label><select id="pf_${k}_category">${opt("ayurvedic",cat,x("Ayurvedic","આયુર્વેદિક"))}${opt("agriculture",cat,x("Agriculture","ખેતીવાડી"))}</select>
+  <div class="row"><div><label>${x("Price (₹)","કિંમત (₹)")}</label><input id="pf_${k}_price" type="number" inputmode="numeric" min="0" value="${v("price")}"></div><div><label>${x("MRP (₹, optional)","MRP (₹, વૈકલ્પિક)")}</label><input id="pf_${k}_mrp" type="number" inputmode="numeric" min="0" value="${v("mrp")}"></div></div>
+  <div class="row"><div><label>${x("Stock","સ્ટોક")}</label><input id="pf_${k}_stock" type="number" inputmode="numeric" min="0" value="${v("stock")}"></div><div><label>${x("Quantity (e.g. 100)","જથ્થો (દા.ત. 100)")}</label><input id="pf_${k}_qty_value" type="number" inputmode="decimal" min="0" value="${v("qty_value")}"></div>
+  <div><label>${x("Unit","એકમ")}</label><select id="pf_${k}_qty_unit"><option value="" ${un?"":"selected"}>—</option>${opt("g",un,x("gram","ગ્રામ"))}${opt("kg",un,x("kg","કિલો"))}${opt("ml",un,x("ml","મિલી"))}${opt("l",un,x("litre","લિટર"))}${opt("pcs",un,x("pcs","નંગ"))}</select></div></div>
+  <label>${x("Pack label (optional, e.g. 100 g Pouch)","પેક લખાણ (વૈકલ્પિક, દા.ત. 100 ગ્રામ પાઉચ)")}</label><input id="pf_${k}_pack_label" maxlength="60" value="${v("pack_label")}">
+  <label>${x("Group name (same name = one card with size options)","ગ્રુપ નામ (એક જ નામ = એક કાર્ડમાં સાઈઝ વિકલ્પ)")}</label><input id="pf_${k}_group" maxlength="60" value="${v("group")}">
+  <details class="more" ${p&&PF_LONG.some(f=>p[f[0]])?"open":""} style="margin-top:12px"><summary>${x("More details (description, ingredients, benefits…)","વધુ વિગતો (વર્ણન, સામગ્રી, ફાયદા…)")}</summary>
+  ${PF_LONG.map(f=>`<label>${x(f[1],f[2])}</label><textarea id="pf_${k}_${f[0]}">${v(f[0])}</textarea>`).join("")}
+  ${PF_SHORT.map(f=>`<label>${x(f[1],f[2])}</label><input id="pf_${k}_${f[0]}" maxlength="200" value="${v(f[0])}">`).join("")}</details>
+  ${PF_URL.map(f=>`<label>${x(f[1],f[2])}</label><input id="pf_${k}_${f[0]}" inputmode="url" value="${v(f[0])}">`).join("")}
+  <div class="row"><div><label>${x("Order on page (small first)","ક્રમ (નાનો નંબર પહેલા)")}</label><input id="pf_${k}_sort" type="number" inputmode="numeric" min="0" value="${v("sort")}"></div><div><label>${x("Show on website?","વેબસાઇટ પર બતાવવી?")}</label><select id="pf_${k}_active">${opt("yes",act==="no"?"no":"yes",x("Yes, visible","હા, દેખાશે"))}${opt("no",act,x("No, hidden","ના, છુપાવેલ"))}</select></div></div>`;
 }
 function prodAdminHTML(){
   return `<div class="panel"><h3>➕ ${x("Add new product","નવી પ્રોડક્ટ ઉમેરો")}</h3>${prodForm(null,"new")}<button class="btn block" onclick="saveProd('new')">💾 ${x("Save","સાચવો")}</button></div><div style="height:24px"></div>`
@@ -546,7 +633,8 @@ async function saveProd(k,zero){
   let price=g("price")===""&&zero&&cur?cur.price:Number(g("price"));
   const stock=zero?0:Number(g("stock"));                // "Out of Stock" ma stock box khali hoy to pan chale
   if(!(price>=0)||(!zero&&(g("price")===""||g("stock")===""))||!(stock>=0)||!Number.isInteger(stock)||(zero&&g("price")===""&&!cur)){toast(x("Enter valid price and stock","સાચી કિંમત અને સ્ટોક લખો"));return;}
-  const p={id:cur?cur.id:"",en:g("en"),gu:g("gu"),price,stock,descEn:g("descEn"),descGu:g("descGu"),img:g("img"),video:g("video"),active:g("active")};
+  const p={id:cur?cur.id:"",en:g("en"),gu:g("gu"),price,stock,active:g("active"),category:g("category"),qty_unit:g("qty_unit"),mrp:g("mrp"),qty_value:g("qty_value"),sort:g("sort"),pack_label:g("pack_label"),group:g("group")};
+  PF_LONG.concat(PF_SHORT,PF_URL).forEach(f=>{p[f[0]]=g(f[0]);});
   busy=true; const r=await adminCall({action:"saveProduct",product:p}); busy=false;
   if(!r.ok){ if(token)toast(errMsg(r)); return; }
   adminProducts=r.products; render(); loadPublic(true); toast(x("Saved","સચવાયું"));
